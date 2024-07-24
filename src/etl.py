@@ -3,46 +3,21 @@ import requests
 import json
 import os
 import datetime
+import logging
 from tqdm import tqdm
 from utils import process_budget, parse_running_time
 
-
-
-
-
-import re
-# Function to convert the movies budgets to USD
-def process_budget(budget):
-    
-    # Clean up budget data
-    if pd.isna(budget):
-        return 0, 0
-    
-    # Extract budget value and convert to integer
-    budget_value = re.search(r'(\d+(?:\.\d+)?)', budget.replace(',', ''))
-    if budget_value:
-        budget_value = float(budget_value.group(0)) * (1e6 if 'million' in budget else 1)
-        if 'US$' in budget or 'USD' in budget:
-            return budget_value, budget_value
-        else:
-            # Convert to USD using an assumed conversion rate
-            conversion_rate = 1.1  # Hypothetical conversion rate; adjust as needed
-            return budget_value, budget_value * conversion_rate
-    return 0, 0
-
-# Function to transform the tim
-def parse_running_time(running_time):
-    if not running_time:
-        return None
-    # Extract the running time in minutes
-    match = re.search(r'(\d+) minutes', running_time)
-    return int(match.group(1)) if match else None
-
-
-
-
 # Define the date to save the files
 date_stamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+
+# Configure logging
+log_path = 'logs'
+os.makedirs(log_path, exist_ok=True)
+logging.basicConfig(
+    filename=os.path.join(log_path, f'{date_stamp}_movie_data.log'),
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 def fetch_movie_data(url: str) -> dict:
 
@@ -116,7 +91,7 @@ def clean_data(movies: list) -> pd.DataFrame:
     df = pd.DataFrame(movies)
 
     # Transofrms year and budget columns
-    df['year'] = df['year'].apply(lambda x: int(x.split('/')[0]) if x.split('/')[0].isnumeric() else None)
+    df['year'] = df['year'].apply(lambda year: year[0:4]) #df['year'].apply(lambda x: int(x.split('/')[0]) if x.split('/')[0].isnumeric() else None)
     df.fillna({'original_budget': 0, 'budget_converted_to_usd': 0}, inplace=True)
     
     return df
@@ -124,25 +99,17 @@ def clean_data(movies: list) -> pd.DataFrame:
 def export_to_csv(df, date_stamp = date_stamp):
     file_name = f'data/cleaned/{date_stamp}_cleaned_movie_data.csv'
     print(file_name)
-    df.to_csv(file_name, index=False)
+    df.to_csv(file_name, index=False, sep=';')
 
-
-url = "http://oscars.yipitdata.com/"
-raw_movie_data = fetch_movie_data(url)
-save_raw_file(raw_movie_data)
-movies = extract_movie_details(raw_movie_data)
-print(movies)
-cleaned_data = clean_data(movies)
-export_to_csv(cleaned_data)
 
 def main() -> None:
     url = "http://oscars.yipitdata.com/"
     raw_movie_data = fetch_movie_data(url)
     save_raw_file(raw_movie_data)
     movies = extract_movie_details(raw_movie_data)
+    print(movies)
     cleaned_data = clean_data(movies)
-    export_to_csv(cleaned_data, f'trusted/{date_stamp}_cleaned_movie_data.csv')
-
+    export_to_csv(cleaned_data)
 
 if __name__ == "__main__":
     main()
