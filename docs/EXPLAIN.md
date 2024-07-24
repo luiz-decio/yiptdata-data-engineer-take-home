@@ -1,5 +1,3 @@
-# EXPLAIN.md
-
 ## Overview
 
 This script performs an ETL (Extract, Transform, Load) process to fetch, process, clean, and save movie data from a specified URL. The code is structured to fetch movie data, save the raw data, extract relevant details, clean the data, and export the cleaned data to a CSV file. Logging is used throughout the script to track the progress and catch any errors.
