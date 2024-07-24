@@ -121,13 +121,20 @@ def main() -> None:
     url = "http://oscars.yipitdata.com/"
 
     try:
+
+        print('>> Starting ETL process...')
     
         raw_movie_data = fetch_movie_data(url)
         save_raw_file(raw_movie_data)
+
+        print('>> Raw data extracted.')
+
         movies = extract_movie_details(raw_movie_data)
-        print(movies)
+
         cleaned_data = clean_data(movies)
         export_to_csv(cleaned_data)
+
+        print('>> Data cleaned and exported to CSV file.')
 
     except Exception as e:
         logging.critical(f"An error occurred in the main function: {e}")
