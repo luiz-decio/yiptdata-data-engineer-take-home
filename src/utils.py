@@ -16,7 +16,7 @@ def process_budget(budget):
             return budget_value, budget_value
         else:
             # Convert to USD using an assumed conversion rate
-            conversion_rate = 1.1  # Hypothetical conversion rate; adjust as needed
+            conversion_rate = 1.1  # Hypothetical conversion rate
             return budget_value, budget_value * conversion_rate
     return 0, 0
 
