@@ -4,6 +4,8 @@
 
 This project is designed to scrape data from an API containing information about Oscar-nominated movies from 1927 to 2014. The script extracts relevant details, including movie budgets, release dates, running times, and production companies, cleans the data, and exports it as a CSV file. The code is written in Python and utilizes the `requests` and `pandas` libraries for web scraping and data manipulation.
 
+#### The detailed explanation can be found in the [EXPLAIN](docs/EXPLAIN.md).
+
 ## Project Structure
 
 - `etl.py`: The main script that runs the data extraction, cleaning, and export process.
