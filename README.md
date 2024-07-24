@@ -26,5 +26,13 @@ This project is designed to scrape data from an API containing information about
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/SpendHound-Data-Engineer-Exercise.git
-   cd SpendHound-Data-Engineer-Exercise
+   git clone https://github.com/luiz-decio/yiptdata-data-engineer-take-home.git
+   cd yiptdata-data-engineer-take-home
+
+2. **Install the libraries and run the project**
+   ```bash
+   pip install requirements.txt
+   python src/etl.py
+   ```
+3. **Check the final result in CSV generated in the [cleaned data folder](data/cleaned/)!**
+4. **Feel free to play around with the [Analysis notebook](analysis/movie_data_exploration.ipynb)!**
