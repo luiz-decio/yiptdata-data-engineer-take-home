@@ -20,34 +20,29 @@ logging.basicConfig(
 )
 
 def fetch_movie_data(url: str) -> dict:
-
     response = requests.get(url)
 
     if response.status_code == 200:
         movie_data =  response.json()
         logging.info(f"Successfully fetched data from {url}")
         return movie_data
-
     else:
         logging.error(f"Failed to fetch data from {url}")
         raise
     
 # Function to save the raw data
 def save_raw_file(raw_data: dict, save_path = "data/raw", date_stamp = date_stamp):
-
     try:
         # Define the file path for saving the JSON data
         file_path = os.path.join(save_path, f"{date_stamp}_raw_movies_data.json")
-
         # Save the movie data to a JSON file
         with open(file_path, "w") as json_file:
             json.dump(raw_data, json_file, indent= 4)
-
     except Exception as e:
         logging.error(f"Failed to save raw data: {e}")
 
+# Function to get the movies details
 def extract_movie_details(movie_data):
-
     # Create an empty list to store movie details
     movies = []
 
@@ -55,7 +50,6 @@ def extract_movie_details(movie_data):
         year = year_entry.get("year")
 
         try:
-            
             for film in year_entry["films"]:
                 film_name = film.get("Film")
                 wikipedia_url = film.get("Wiki URL")
@@ -84,7 +78,6 @@ def extract_movie_details(movie_data):
                     "production_company": production_company.strip() if production_company else None,
                     "country": country
                 })
-
         except Exception as e:
             logging.warning(f"The movie {film_name} could not be extracted: {e}")
             print(f"The movie {film_name} could not be extracted.")
@@ -94,8 +87,9 @@ def extract_movie_details(movie_data):
     logging.info("Extraction of movie details completed successfully")
     return movies
 
+# Function that cleans the recent extracted data
 def clean_data(movies: list) -> pd.DataFrame:
-
+    
     # Convert the data to Dataframe
     df = pd.DataFrame(movies)
 
@@ -104,11 +98,10 @@ def clean_data(movies: list) -> pd.DataFrame:
     df.fillna({"original_budget": 0, "budget_converted_to_usd": 0}, inplace=True)
     
     logging.info("Data cleaning completed successfully")
-
     return df
 
+# Function to save the clean data as a CSV file in the clened folder
 def export_to_csv(df, date_stamp = date_stamp):
-
     try:
         file_name = f"data/cleaned/{date_stamp}_cleaned_movie_data.csv"
         df.to_csv(file_name, index=False, sep=";")
@@ -121,19 +114,14 @@ def main() -> None:
     url = "http://oscars.yipitdata.com/"
 
     try:
-
         print('>> Starting ETL process...')
-    
         raw_movie_data = fetch_movie_data(url)
         save_raw_file(raw_movie_data)
-
         print('>> Raw data extracted.')
 
         movies = extract_movie_details(raw_movie_data)
-
         cleaned_data = clean_data(movies)
         export_to_csv(cleaned_data)
-
         print('>> Data cleaned and exported to CSV file.')
 
     except Exception as e:
